@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Kingshot 集結時間マッチングツール</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/webp" href="kingshot-fav-1-150x150.webp">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      margin: 0;
+      padding: 2rem 1.5rem;
+      background: #f5f5f0;
+      color: #333;
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      margin-top: 0;
+      margin-bottom: 0;
+      font-size: 1.5rem;
+      font-weight: 300;
+      text-align: center;
+      color: #333;
+      letter-spacing: 0.02em;
+      line-height: 1.4;
+    }
+    
+    .logo-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      margin-bottom: 3rem;
+      padding: 0;
+    }
+    
+    .logo-header img {
+      height: 40px;
+      width: auto;
+      display: block;
+    }
+    
+    .card {
+      background: #fff;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid #e5e5e5;
+    }
+    
+    .description {
+      font-size: 0.875rem;
+      color: #666;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+    
+    .description strong {
+      color: #333;
+      font-weight: 500;
+    }
+    
+    .description code {
+      background: #f5f5f0;
+      padding: 0.15rem 0.4rem;
+      font-family: 'Courier New', monospace;
+      color: #333;
+      font-size: 0.9em;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+      background: #fff;
+    }
+    
+    th, td {
+      padding: 0.875rem 1rem;
+      text-align: left;
+      font-size: 0.875rem;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    
+    th {
+      background: #fafafa;
+      color: #333;
+      font-weight: 500;
+    }
+    
+    tr:hover td {
+      background: #fafafa;
+    }
+    
+    input[type="text"], select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #333;
+      font-size: 0.875rem;
+      font-family: inherit;
+      transition: border-color 0.2s ease;
+    }
+    
+    input[type="text"]:focus, select:focus {
+      outline: none;
+      border-color: #333;
+    }
+    
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #333;
+    }
+    
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    button {
+      border: 1px solid #333;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      background: #fff;
+      color: #333;
+      font-weight: 400;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    
+    button:hover:not(:disabled) {
+      background: #333;
+      color: #fff;
+    }
+    
+    button.secondary {
+      background: #fff;
+      color: #666;
+      border-color: #ddd;
+    }
+    
+    button.secondary:hover:not(:disabled) {
+      background: #f5f5f0;
+      color: #333;
+      border-color: #333;
+    }
+    
+    button.danger {
+      background: #fff;
+      color: #d32f2f;
+      border-color: #d32f2f;
+    }
+    
+    button.danger:hover:not(:disabled) {
+      background: #d32f2f;
+      color: #fff;
+    }
+    
+    button.calc-btn {
+      background: #d32f2f;
+      color: #fff;
+      border-color: #d32f2f;
+    }
+    
+    button.calc-btn:hover:not(:disabled) {
+      background: #b71c1c;
+      border-color: #b71c1c;
+      color: #fff;
+    }
+    
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    
+    .base-time {
+      font-size: 0.8125rem;
+      color: #999;
+    }
+    
+    .base-time label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .base-time select {
+      padding: 0.375rem 0.75rem;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #333;
+      font-size: 0.8125rem;
+      cursor: pointer;
+    }
+    
+    .results {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e5e5e5;
+    }
+    
+    .results h2 {
+      font-size: 1.125rem;
+      margin: 0 0 1.5rem;
+      color: #333;
+      font-weight: 500;
+    }
+    
+    .warn {
+      color: #f57c00;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: #fff3e0;
+      border-left: 3px solid #f57c00;
+    }
+    
+    .error {
+      color: #d32f2f;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: #ffebee;
+      border-left: 3px solid #d32f2f;
+    }
+    
+    .tag {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: #f5f5f0;
+      color: #666;
+      border: 1px solid #ddd;
+    }
+    
+    .copy-text {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #fafafa;
+      border: 1px solid #e5e5e5;
+    }
+    
+    .copy-text label {
+      display: block;
+      font-size: 0.8125rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    
+    .copy-text-wrapper {
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+    
+    .copy-text textarea {
+      flex: 1;
+      min-height: 120px;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #333;
+      font-size: 0.875rem;
+      font-family: 'Courier New', monospace;
+      resize: vertical;
+      line-height: 1.6;
+    }
+    
+    .copy-text textarea:focus {
+      outline: none;
+      border-color: #333;
+    }
+    
+    .copy-button {
+      padding: 0.625rem 1rem;
+      font-size: 0.875rem;
+      border: 1px solid #333;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    
+    .copy-button:hover {
+      background: #333;
+      color: #fff;
+    }
+    
+    .copy-button:active {
+      background: #666;
+    }
+    
+    .main-members label:hover {
+      background: #f5f5f0;
+      border-color: #333;
+    }
+    
+    .main-members input[type="checkbox"]:checked + span {
+      font-weight: 500;
+    }
+    
+    .alliance-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: nowrap;
+    }
+    
+    .alliance-tab {
+      padding: 0.5rem 1rem;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #666;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    
+    .alliance-tab:hover {
+      background: #f5f5f0;
+      border-color: #333;
+    }
+    
+    .alliance-tab.active {
+      background: #f5f5f0;
+      border-color: #333;
+      color: #333;
+      font-weight: 500;
+    }
+    
+    .alliance-members {
+      display: none;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .alliance-members.active {
+      display: flex;
+    }
+    
+    .delete-btn {
+      border: 1px solid #e8b4d4;
+      background: #fef5f5;
+      color: #c8a2d4;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      width: 100%;
+    }
+    
+    .delete-btn:hover {
+      background: #fce7e7;
+      border-color: #d4a5e8;
+      color: #b890d0;
+    }
+    
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      font-size: 0.8125rem;
+      color: #999;
+      padding-bottom: 2rem;
+    }
+    
+    #message {
+      margin: 1rem 0;
+      min-height: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      
+      h1 {
+        font-size: 1.25rem;
+        font-weight: 300;
+      }
+      
+      .logo-header {
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+      
+      .logo-header img {
+        height: 36px;
+      }
+      
+      .card {
+        padding: 1.5rem;
+      }
+      
+      th, td {
+        font-size: 0.8125rem;
+        padding: 0.75rem 0.5rem;
+      }
+      
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .btn-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .btn-group {
+        width: 100%;
+        flex-direction: row;
+        align-items: stretch;
+        flex-wrap: nowrap;
+      }
+      
+      .btn-group > * {
+        width: 100%;
+      }
+      
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-header">
+      <img src="kingshot-logo.webp" alt="Kingshot Logo">
+      <h1>Kingshot 集結時間マッチングツール</h1>
+    </div>
+    
+    <div class="card">
+      <p class="description">
+        全集結に共通の<strong>集結時間</strong>（参加ウィンドウ）を選択し、各集結の<strong>名前</strong>と<strong>到着時間</strong>を入力してください。<br>
+        到着時間は<strong>秒のみ</strong>で入力してください（例：<code>37</code>）。<br>
+        このツールは<strong>集結時間 + 到着時間</strong>を使用してヒットを同期させ、すべての集結が同時に到着するようにします。
+      </p>
+      
+      <div class="btn-row">
+        <div class="btn-group">
+            <label class="base-time">
+            全集結の集結時間:
+            <select id="globalRallyTime">
+              <option value="1">1分</option>
+              <option value="5" selected>5分</option>
+              <option value="10">10分</option>
+              <option value="30">30分</option>
+              <option value="60">60分</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      
+      <!-- Main members quick select -->
+      <div class="main-members" style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.875rem; color: #666; margin-bottom: 0.75rem; font-weight: 500;">主要メンバー（クリックで追加）:</label>
+        <div class="alliance-tabs" id="allianceTabs">
+          <button type="button" class="alliance-tab active" data-alliance="ARK">ARK</button>
+          <button type="button" class="alliance-tab" data-alliance="NyA">NyA</button>
+          <button type="button" class="alliance-tab" data-alliance="hax">hax</button>
+          <button type="button" class="alliance-tab" data-alliance="NET">NET</button>
+        </div>
+        <div class="alliance-members active" id="ARK-members">
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="茶黒白猫" style="cursor: pointer; accent-color: #333;">
+            <span>茶黒白猫</span>
+          </label>
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="きゃん" style="cursor: pointer; accent-color: #333;">
+            <span>きゃん</span>
+          </label>
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="まる" style="cursor: pointer; accent-color: #333;">
+            <span>まる</span>
+          </label>
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="かつと" style="cursor: pointer; accent-color: #333;">
+            <span>かつと</span>
+          </label>
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="mono" style="cursor: pointer; accent-color: #333;">
+            <span>mono</span>
+          </label>
+        </div>
+        <div class="alliance-members" id="NyA-members">
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="りんご君" style="cursor: pointer; accent-color: #333;">
+            <span>りんご君</span>
+          </label>
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="里奈！" style="cursor: pointer; accent-color: #333;">
+            <span>里奈！</span>
+          </label>
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="tanukiti" style="cursor: pointer; accent-color: #333;">
+            <span>tanukiti</span>
+          </label>
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="森のくまさん" style="cursor: pointer; accent-color: #333;">
+            <span>森のくまさん</span>
+          </label>
+        </div>
+        <div class="alliance-members" id="hax-members">
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="田中三郎" style="cursor: pointer; accent-color: #333;">
+            <span>田中三郎</span>
+          </label>
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="葉月" style="cursor: pointer; accent-color: #333;">
+            <span>葉月</span>
+          </label>
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="hokkaido" style="cursor: pointer; accent-color: #333;">
+            <span>hokkaido</span>
+          </label>
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="おにぎりさん" style="cursor: pointer; accent-color: #333;">
+            <span>おにぎりさん</span>
+          </label>
+        </div>
+        <div class="alliance-members" id="NET-members">
+          <label style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+            <input type="checkbox" class="member-checkbox" value="猛虎襲来" style="cursor: pointer; accent-color: #333;">
+            <span>猛虎襲来</span>
+          </label>
+        </div>
+        <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <input type="text" id="newMemberInput" placeholder="メンバー名を入力" style="padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; color: #333; font-size: 0.875rem; font-family: inherit; flex: 1; min-width: 150px;">
+          <button type="button" id="addMemberBtn" style="padding: 0.375rem 0.75rem; border: 1px solid #333; background: #fff; color: #333; cursor: pointer; font-size: 0.875rem; font-family: inherit; transition: all 0.2s ease; white-space: nowrap;">追加</button>
+        </div>
+      </div>
+      
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 8%;"></th>
+            <th style="width: 32%;">名前</th>
+            <th style="width: 30%;">到着時間（秒）</th>
+            <th style="width: 30%;">ベース後の遅延（秒）</th>
+          </tr>
+        </thead>
+        <tbody id="rallyBody"></tbody>
+      </table>
+      
+      <div class="btn-row">
+        <div class="btn-group" style="display: flex; gap: 0.5rem; flex-wrap: nowrap;">
+          <button type="button" id="addRowBtn">＋ 集結を追加</button>
+          <button type="button" class="secondary" id="clearBtn">すべてクリア</button>
+        </div>
+        <button type="button" id="calcBtn" class="calc-btn">集結タイミングを計算</button>
+        <span class="base-time">
+          ヒント: 偽の集結を開始して、各集結リーダーからターゲットへの到着時間をテストし、ここに入力してください。
+        </span>
+      </div>
+      
+      <div id="message"></div>
+      
+      <div class="results" id="results" style="display:none;">
+        <h2>集結開始スケジュール <span class="tag">同期ヒット</span></h2>
+        <div id="summary"></div>
+        <div class="copy-text">
+          <label>コピー用テキスト:</label>
+          <div class="copy-text-wrapper">
+            <textarea id="copyText" readonly></textarea>
+          </div>
+          <button type="button" class="copy-button" id="copyBtn">コピー</button>
+        </div>
+        <table id="resultsTable">
+          <thead>
+            <tr>
+              <th>名前</th>
+              <th>到着（秒）</th>
+              <th>ベース後の遅延（秒）</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </div>
+      
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+      <small style="color:#999;">mono memo</small>
+    </footer>
+  </div>
+
+  <script>
+    const rallyBody = document.getElementById('rallyBody');
+    const addRowBtn = document.getElementById('addRowBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const calcBtn = document.getElementById('calcBtn');
+    const messageDiv = document.getElementById('message');
+    const resultsDiv = document.getElementById('results');
+    const resultsBody = document.getElementById('resultsBody');
+    const summaryDiv = document.getElementById('summary');
+    const globalRallyTimeSelect = document.getElementById('globalRallyTime');
+    const copyTextArea = document.getElementById('copyText');
+    const copyBtn = document.getElementById('copyBtn');
+    const memberCheckboxes = document.querySelectorAll('.member-checkbox');
+
+    // Rally timing globals
+    let globalRallySeconds = 5 * 60;
+    let globalMaxMarch = 0;
+    
+    // Storage keys
+    const STORAGE_KEY_RALLIES = 'rallySync_rallies';
+    const STORAGE_KEY_RALLY_TIME = 'rallySync_rallyTime';
+    const STORAGE_KEY_CUSTOM_MEMBERS = 'rallySync_customMembers';
+
+    function makeLabel(name) {
+      name = (name || '').trim();
+      return name || '未命名';
+    }
+
+    function addRow(name = '', marchTime = '') {
+      const tr = document.createElement('tr');
+
+      // Delete button (first column)
+      const deleteTd = document.createElement('td');
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.textContent = '×';
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.addEventListener('click', function() {
+        tr.remove();
+        saveData();
+      });
+      deleteTd.appendChild(deleteBtn);
+
+      // Name
+      const nameTd = document.createElement('td');
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.placeholder = '名前';
+      if (name) nameInput.value = name;
+      nameInput.classList.add('caller-name');
+      nameTd.appendChild(nameInput);
+
+      // March time in seconds
+      const timeTd = document.createElement('td');
+      const timeInput = document.createElement('input');
+      timeInput.type = 'text';
+      timeInput.placeholder = '秒（例：37）';
+      if (marchTime) timeInput.value = marchTime;
+      timeInput.classList.add('march-time');
+      timeTd.appendChild(timeInput);
+
+      // Delay After Base (s) - filled after calculation
+      const delayTd = document.createElement('td');
+      delayTd.textContent = '-';
+
+      tr.appendChild(deleteTd);
+      tr.appendChild(nameTd);
+      tr.appendChild(timeTd);
+      tr.appendChild(delayTd);
+
+      rallyBody.appendChild(tr);
+    }
+
+    // Parse seconds-only
+    function parseTime(str) {
+      if (!str) return NaN;
+      str = str.trim();
+      const v = parseFloat(str);
+      return isNaN(v) || v <= 0 ? NaN : v;
+    }
+
+    // For summary text only
+    function formatTime(sec) {
+      if (!isFinite(sec)) return '';
+      sec = Math.round(sec);
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return m + ':' + String(s).padStart(2, '0');
+    }
+
+
+    function calculate() {
+      messageDiv.innerHTML = '';
+      messageDiv.className = '';
+      resultsDiv.style.display = 'none';
+      resultsBody.innerHTML = '';
+      summaryDiv.innerHTML = '';
+      copyTextArea.value = '';
+
+      const rallyMinutes = parseInt(globalRallyTimeSelect.value, 10) || 5;
+      globalRallySeconds = rallyMinutes * 60;
+
+      const rows = Array.from(rallyBody.querySelectorAll('tr'));
+      const entries = [];
+
+      for (const row of rows) {
+        const nameInput = row.querySelector('.caller-name');
+        const marchInput = row.querySelector('.march-time');
+
+        if (!nameInput || !marchInput) continue;
+
+        const name = nameInput.value.trim();
+        const timeStr = marchInput.value.trim();
+
+        if (!name && !timeStr) {
+          continue; // ignore empty row
+        }
+
+        // Skip if no time (empty row)
+        if (!timeStr) {
+          continue;
+        }
+
+        const secs = parseTime(timeStr);
+        if (isNaN(secs)) {
+          messageDiv.textContent = `無効な到着時間「${timeStr}」。秒のみで入力してください（例：37）。`;
+          messageDiv.className = 'error';
+          return;
+        }
+
+        entries.push({
+          name: name || '未命名',
+          marchSeconds: secs,
+          rowEl: row
+        });
+      }
+
+      if (entries.length < 2) {
+        messageDiv.textContent = '同期するには少なくとも2つの集結を追加してください。';
+        messageDiv.className = 'warn';
+        return;
+      }
+
+      globalMaxMarch = Math.max(...entries.map(e => e.marchSeconds));
+      const globalTotalDuration = globalRallySeconds + globalMaxMarch;
+
+      // Calculate delay for each entry and add to entries
+      entries.forEach(e => {
+        e.delay = Math.max(0, globalMaxMarch - e.marchSeconds);
+        e.label = makeLabel(e.name);
+        
+        // Update delay cell in the TOP table (input rows)
+        const originalDelayCell = e.rowEl.children[3]; // 4th <td> (delay column, after delete, name, time)
+        if (originalDelayCell) {
+          originalDelayCell.textContent = `${e.delay}秒`;
+        }
+      });
+
+      // Sort entries by delay (ascending) - delay 0 (slowest march) comes first
+      entries.sort((a, b) => a.delay - b.delay);
+
+      // Build results table and schedule from sorted entries
+      const schedule = [];
+      entries.forEach(e => {
+        // Fill the RESULTS table below
+        const tr = document.createElement('tr');
+        const nameTd = document.createElement('td');
+        nameTd.textContent = e.name;
+        const marchTd = document.createElement('td');
+        marchTd.textContent = `${e.marchSeconds}秒`;
+        // Note: marchSeconds is used internally but displayed as "到着"
+        const delayTd = document.createElement('td');
+        delayTd.textContent = `${e.delay}秒`;
+
+        tr.appendChild(nameTd);
+        tr.appendChild(marchTd);
+        tr.appendChild(delayTd);
+
+        resultsBody.appendChild(tr);
+
+        schedule.push({
+          name: e.name,
+          label: e.label,
+          delay: e.delay
+        });
+      });
+
+      // Generate copy text: "集結時間：5分\n名前（開始）＞名前（〇秒後）＞..."
+      const copyTextLines = [];
+      copyTextLines.push(`集結時間：${rallyMinutes}分`);
+      
+      const scheduleParts = [];
+      schedule.forEach((item, index) => {
+        if (index === 0) {
+          scheduleParts.push(`${item.label}（開始）`);
+        } else {
+          scheduleParts.push(`${item.label}（${item.delay}秒後）`);
+        }
+      });
+      copyTextLines.push(scheduleParts.join('＞'));
+      
+      copyTextArea.value = copyTextLines.join('\n');
+
+      summaryDiv.innerHTML = `
+        <p class="description">
+          共通集結時間: <strong>${rallyMinutes}分（${globalRallySeconds}秒、${formatTime(globalRallySeconds)}）</strong>。<br>
+          ベース集結作成時（t = 0）からヒットまで: <strong>${globalTotalDuration}秒（${formatTime(globalTotalDuration)}）</strong>。
+        </p>
+      `;
+
+      resultsDiv.style.display = 'block';
+      
+      // Scroll to results
+      resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Save data to localStorage
+    function saveData() {
+      const rows = Array.from(rallyBody.querySelectorAll('tr'));
+      const data = [];
+      
+      rows.forEach(row => {
+        const nameInput = row.querySelector('.caller-name');
+        const marchInput = row.querySelector('.march-time');
+        
+        if (nameInput && marchInput) {
+          const name = nameInput.value.trim();
+          const marchTime = marchInput.value.trim();
+          
+          if (name || marchTime) {
+            data.push({ name, marchTime });
+          }
+        }
+      });
+      
+      localStorage.setItem(STORAGE_KEY_RALLIES, JSON.stringify(data));
+      localStorage.setItem(STORAGE_KEY_RALLY_TIME, globalRallyTimeSelect.value);
+      saveCustomMembers();
+    }
+    
+    // Save custom members to localStorage
+    function saveCustomMembers() {
+      const customMembers = {};
+      const alliances = ['ARK', 'NyA', 'hax', 'NET'];
+      
+      alliances.forEach(alliance => {
+        const membersDiv = document.getElementById(`${alliance}-members`);
+        if (membersDiv) {
+          const defaultMembers = new Set();
+          // Get default members from HTML (hardcoded)
+          if (alliance === 'ARK') {
+            defaultMembers.add('茶黒白猫');
+            defaultMembers.add('きゃん');
+            defaultMembers.add('まる');
+            defaultMembers.add('かつと');
+            defaultMembers.add('mono');
+          } else if (alliance === 'NyA') {
+            defaultMembers.add('りんご君');
+            defaultMembers.add('里奈！');
+            defaultMembers.add('tanukiti');
+            defaultMembers.add('森のくまさん');
+          } else if (alliance === 'hax') {
+            defaultMembers.add('田中三郎');
+            defaultMembers.add('葉月');
+            defaultMembers.add('hokkaido');
+            defaultMembers.add('おにぎりさん');
+          } else if (alliance === 'NET') {
+            defaultMembers.add('猛虎襲来');
+          }
+          
+          const checkboxes = membersDiv.querySelectorAll('.member-checkbox');
+          const custom = [];
+          checkboxes.forEach(cb => {
+            if (!defaultMembers.has(cb.value)) {
+              custom.push(cb.value);
+            }
+          });
+          
+          if (custom.length > 0) {
+            customMembers[alliance] = custom;
+          }
+        }
+      });
+      
+      localStorage.setItem(STORAGE_KEY_CUSTOM_MEMBERS, JSON.stringify(customMembers));
+    }
+    
+    // Load custom members from localStorage
+    function loadCustomMembers() {
+      const saved = localStorage.getItem(STORAGE_KEY_CUSTOM_MEMBERS);
+      if (saved) {
+        try {
+          const customMembers = JSON.parse(saved);
+          const alliances = ['ARK', 'NyA', 'hax', 'NET'];
+          
+          alliances.forEach(alliance => {
+            if (customMembers[alliance] && Array.isArray(customMembers[alliance])) {
+              const membersDiv = document.getElementById(`${alliance}-members`);
+              if (membersDiv) {
+                customMembers[alliance].forEach(memberName => {
+                  const existingCheckboxes = membersDiv.querySelectorAll('.member-checkbox');
+                  const exists = Array.from(existingCheckboxes).some(cb => cb.value === memberName);
+                  
+                  if (!exists) {
+                    const newMemberLabel = createMemberCheckbox(memberName, alliance, true);
+                    membersDiv.appendChild(newMemberLabel);
+                  }
+                });
+              }
+            }
+          });
+        } catch (e) {
+          console.error('Failed to load custom members:', e);
+        }
+      }
+    }
+    
+    // Load data from localStorage
+    function loadData() {
+      const savedData = localStorage.getItem(STORAGE_KEY_RALLIES);
+      const savedRallyTime = localStorage.getItem(STORAGE_KEY_RALLY_TIME);
+      
+      if (savedRallyTime) {
+        globalRallyTimeSelect.value = savedRallyTime;
+      }
+      
+      if (savedData) {
+        try {
+          const data = JSON.parse(savedData);
+          rallyBody.innerHTML = '';
+          
+          if (data.length > 0) {
+            const memberNames = new Set();
+            data.forEach(item => {
+              const name = item.name || '';
+              addRow(name, item.marchTime || '');
+              if (name) memberNames.add(name);
+            });
+            
+            // Update checkbox states (including custom members)
+            const allCheckboxes = document.querySelectorAll('.member-checkbox');
+            allCheckboxes.forEach(cb => {
+              cb.checked = memberNames.has(cb.value);
+            });
+          } else {
+            addRow();
+            addRow();
+            addRow();
+          }
+        } catch (e) {
+          console.error('Failed to load data:', e);
+          addRow();
+          addRow();
+          addRow();
+        }
+      } else {
+        addRow();
+        addRow();
+        addRow();
+      }
+    }
+    
+    // Member checkbox handlers
+    memberCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        const memberName = e.target.value;
+        if (e.target.checked) {
+          addRow(memberName, '');
+          saveData();
+        } else {
+          // Uncheck: remove row with this name
+          const rows = Array.from(rallyBody.querySelectorAll('tr'));
+          rows.forEach(row => {
+            const nameInput = row.querySelector('.caller-name');
+            if (nameInput && nameInput.value.trim() === memberName) {
+              row.remove();
+              saveData();
+            }
+          });
+        }
+      });
+    });
+    
+    // Save data when inputs change
+    function setupInputListeners() {
+      rallyBody.addEventListener('input', (e) => {
+        if (e.target.classList.contains('caller-name') || e.target.classList.contains('march-time')) {
+          saveData();
+          // Update checkbox states based on current names
+          const rows = Array.from(rallyBody.querySelectorAll('tr'));
+          const currentNames = new Set();
+          rows.forEach(row => {
+            const nameInput = row.querySelector('.caller-name');
+            if (nameInput) {
+              const name = nameInput.value.trim();
+              if (name) currentNames.add(name);
+            }
+          });
+          
+          // Update checkbox states (including custom members)
+          const allCheckboxes = document.querySelectorAll('.member-checkbox');
+          allCheckboxes.forEach(cb => {
+            cb.checked = currentNames.has(cb.value);
+          });
+        }
+      });
+      
+      globalRallyTimeSelect.addEventListener('change', () => {
+        saveData();
+      });
+    }
+    
+    // Event hooks
+    addRowBtn.addEventListener('click', () => {
+      addRow();
+      saveData();
+    });
+    
+    clearBtn.addEventListener('click', () => {
+      rallyBody.innerHTML = '';
+      resultsDiv.style.display = 'none';
+      summaryDiv.innerHTML = '';
+      copyTextArea.value = '';
+      messageDiv.textContent = '';
+      messageDiv.className = '';
+      localStorage.removeItem(STORAGE_KEY_RALLIES);
+      localStorage.removeItem(STORAGE_KEY_RALLY_TIME);
+      const allCheckboxes = document.querySelectorAll('.member-checkbox');
+      allCheckboxes.forEach(cb => cb.checked = false);
+      addRow();
+      addRow();
+      addRow();
+    });
+    
+    calcBtn.addEventListener('click', calculate);
+    
+    // Copy button
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(copyTextArea.value);
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = 'コピーしました';
+        setTimeout(() => {
+          copyBtn.textContent = originalText;
+        }, 2000);
+      } catch (err) {
+        // Fallback for older browsers
+        copyTextArea.select();
+        document.execCommand('copy');
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = 'コピーしました';
+        setTimeout(() => {
+          copyBtn.textContent = originalText;
+        }, 2000);
+      }
+    });
+
+    // Alliance tab switching
+    const allianceTabs = document.querySelectorAll('.alliance-tab');
+    let currentAlliance = 'ARK'; // Default active alliance
+    
+    function getCurrentAllianceMembers() {
+      return document.getElementById(`${currentAlliance}-members`);
+    }
+    
+    function isDefaultMember(alliance, memberName) {
+      const defaultMembers = new Set();
+      if (alliance === 'ARK') {
+        defaultMembers.add('茶黒白猫');
+        defaultMembers.add('きゃん');
+        defaultMembers.add('まる');
+        defaultMembers.add('かつと');
+        defaultMembers.add('mono');
+      } else if (alliance === 'NyA') {
+        defaultMembers.add('りんご君');
+        defaultMembers.add('里奈！');
+        defaultMembers.add('tanukiti');
+        defaultMembers.add('森のくまさん');
+      } else if (alliance === 'hax') {
+        defaultMembers.add('田中三郎');
+        defaultMembers.add('葉月');
+        defaultMembers.add('hokkaido');
+        defaultMembers.add('おにぎりさん');
+      } else if (alliance === 'NET') {
+        defaultMembers.add('猛虎襲来');
+      }
+      return defaultMembers.has(memberName);
+    }
+    
+    function createMemberCheckbox(name, alliance, isCustom = false) {
+      const label = document.createElement('label');
+      label.style.cssText = 'display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border: 1px solid #ddd; background: #fff; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease; position: relative; flex-wrap: nowrap; max-width: 100%;';
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'member-checkbox';
+      checkbox.value = name;
+      checkbox.style.cssText = 'cursor: pointer; accent-color: #333; flex-shrink: 0;';
+      
+      const span = document.createElement('span');
+      span.textContent = name;
+      span.style.cssText = 'flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
+      
+      label.appendChild(checkbox);
+      label.appendChild(span);
+      
+      // Add delete button for custom members
+      if (isCustom) {
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.textContent = '×';
+        deleteBtn.style.cssText = 'margin-left: 0.25rem; padding: 0 0.25rem; border: none; background: transparent; color: #999; cursor: pointer; font-size: 0.875rem; line-height: 1; transition: color 0.2s ease; flex-shrink: 0; width: 1.25rem; min-width: 1.25rem; text-align: center;';
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          label.remove();
+          saveCustomMembers();
+        });
+        deleteBtn.addEventListener('mouseenter', () => {
+          deleteBtn.style.color = '#333';
+        });
+        deleteBtn.addEventListener('mouseleave', () => {
+          deleteBtn.style.color = '#999';
+        });
+        label.appendChild(deleteBtn);
+      }
+      
+      // Add checkbox handler (same as existing ones)
+      checkbox.addEventListener('change', (e) => {
+        const memberName = e.target.value;
+        if (e.target.checked) {
+          addRow(memberName, '');
+          saveData();
+        } else {
+          const rows = Array.from(rallyBody.querySelectorAll('tr'));
+          rows.forEach(row => {
+            const nameInput = row.querySelector('.caller-name');
+            if (nameInput && nameInput.value.trim() === memberName) {
+              row.remove();
+              saveData();
+            }
+          });
+        }
+      });
+      
+      return label;
+    }
+    
+    allianceTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetAlliance = tab.getAttribute('data-alliance');
+        currentAlliance = targetAlliance;
+        
+        // Remove active class from all tabs and members
+        allianceTabs.forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.alliance-members').forEach(m => m.classList.remove('active'));
+        
+        // Add active class to clicked tab and corresponding members
+        tab.classList.add('active');
+        document.getElementById(`${targetAlliance}-members`).classList.add('active');
+      });
+    });
+    
+    // Add member button
+    const newMemberInput = document.getElementById('newMemberInput');
+    const addMemberBtn = document.getElementById('addMemberBtn');
+    
+    addMemberBtn.addEventListener('click', () => {
+      const memberName = newMemberInput.value.trim();
+      if (memberName) {
+        const currentMembersDiv = getCurrentAllianceMembers();
+        const existingCheckboxes = currentMembersDiv.querySelectorAll('.member-checkbox');
+        const exists = Array.from(existingCheckboxes).some(cb => cb.value === memberName);
+        
+        if (!exists) {
+          const newMemberLabel = createMemberCheckbox(memberName, currentAlliance, true);
+          currentMembersDiv.appendChild(newMemberLabel);
+          newMemberInput.value = '';
+          saveCustomMembers();
+        }
+      }
+    });
+    
+    newMemberInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        addMemberBtn.click();
+      }
+    });
+    
+    // Initialize
+    loadCustomMembers();
+    loadData();
+    setupInputListeners();
+  </script>
+</body>
+</html>
